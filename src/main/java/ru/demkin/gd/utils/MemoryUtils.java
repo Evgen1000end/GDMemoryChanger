@@ -5,6 +5,8 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 
+import java.nio.ByteBuffer;
+
 /**
  * Created by evgen1000end on 17.07.2015.
  */
@@ -34,6 +36,10 @@ public  class MemoryUtils  {
             l >>= 8;
         }
         return result;
+    }
+
+    public static byte[] intToBytes(int i){
+       return ByteBuffer.allocate(4).putInt(i).array();
     }
 
     public static long bytesToLong(byte[] b) {

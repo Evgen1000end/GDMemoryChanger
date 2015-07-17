@@ -1,9 +1,13 @@
 package ru.demkin.gd;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 import com.sun.jna.Memory;
@@ -19,14 +23,12 @@ import java.nio.ByteBuffer;
 
 public class MainApp extends Application {
 
-    final static long baseAddress = 0x002291E0;
-    final static long[] offsets = new long[]{0x68, 0x34C, 0xA74};
 
 
     public static void main(String[] args) throws Exception {
-        //launch(args);
+        launch(args);
 
-        MemoryUtils.ChangeValue("Grim Dawn", baseAddress, offsets, new byte[]{0x05,0x00,0x00,0x00});
+       // MemoryUtils.ChangeValue("Grim Dawn", baseAddress, offsets, new byte[]{0x06, 0x00, 0x00, 0x00});
     }
 
 
@@ -37,6 +39,9 @@ public class MainApp extends Application {
         Parent root = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
         stage.setTitle("JavaFX and Maven");
         stage.setScene(new Scene(root));
+
+
+
 
 
         stage.show();
