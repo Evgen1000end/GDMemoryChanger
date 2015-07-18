@@ -69,14 +69,33 @@ public  class MemoryUtils  {
         Memory pTemp = new Memory(size);
         long pointerAddress = 0;
 
+
+        String _hexBase = Long.toHexString(pointer);
+
+        Memory temp2 = readMemory(process, pointer,4);
+
+        kernel32.ReadProcessMemory(process, pointer, pTemp, size, null);
+
+
+        long firstPointer = temp2.getInt(0);
+
+
+
+        String _hexFirstValue = Long.toHexString(firstPointer);
+
+
         for(int i = 0; i < offsets.length; i++)
         {
             if(i == 0)
             {
                 kernel32.ReadProcessMemory(process, pointer, pTemp, size, null);
+
             }
 
             pointerAddress = ((pTemp.getInt(0)+offsets[i]));
+
+            String _hexTemp = Long.toHexString(pointerAddress);
+
 
             if(i != offsets.length-1)
                 kernel32.ReadProcessMemory(process, pointerAddress, pTemp, size, null);
@@ -117,7 +136,7 @@ public  class MemoryUtils  {
         long dynAddress = findDynAddress(process, offsets, baseAddress);
 
 
-        final long tempAdress =0x1D7369C8;
+        final long tempAdress =0x1B2B7DC0;
         // Memory scoreMem = readMemory(process,dynAddress,4);
         Memory scoreMem = readMemory(process,tempAdress,4);
 

@@ -48,17 +48,10 @@ public class MainController implements Initializable {
 
         myButton.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {
-
                 byte [] value = MemoryUtils.intToBytes(Integer.parseInt(myField.getText()));
-
                 reverse(value);
-
-                //new byte[]{0x11, 0x00, 0x00, 0x00}
-
                 MemoryUtils.ChangeValue("Grim Dawn", baseAddress, offsets,value );
             }
         });
-
-
     }
 }
