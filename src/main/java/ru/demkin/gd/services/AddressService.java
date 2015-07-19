@@ -10,6 +10,8 @@ public class AddressService {
 
     private int currentProcessAddress;
 
+    public  boolean isDetectGame = false;
+
 
     private long skillDynamicAddress;
     private final long skillBaseAddress = 0x002291E0;
@@ -42,6 +44,13 @@ public class AddressService {
 
         jnaCore = JNACore.getInstance();
         jnaCore.LoadProcess("Grim Dawn");
+
+        if (jnaCore.Pid ==0) {
+            return;
+        }
+
+        isDetectGame = true;
+
         currentProcessAddress = jnaCore.getBaseAddress();
 
         skillDynamicAddress = jnaCore.findDynAddress2(skillsOffsets, currentProcessAddress + skillBaseAddress);
