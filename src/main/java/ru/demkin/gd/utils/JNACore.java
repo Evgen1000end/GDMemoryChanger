@@ -1,13 +1,20 @@
 package ru.demkin.gd.utils;
 
 import com.sun.jna.Memory;
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
+
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class JNACore {
 
     private static JNACore instance = null;
+
+
+    static Kernel32 kernel32 = (Kernel32) Native.loadLibrary("kernel32", Kernel32.class);
+    static User32 user32 = (User32) Native.loadLibrary("user32", User32.class);
 
     public final int PROCESS_QUERY_INFORMATION = 0x0400;
     public final int PROCESS_VM_READ = 0x0010;
@@ -39,6 +46,30 @@ public class JNACore {
         return instance;
     }
 
+    public static int getProcessId(String window) {
+        IntByReference pid = new IntByReference(0);
+        user32.GetWindowThreadProcessId(user32.FindWindowA(null, window), pid);
+
+        return pid.getValue();
+    }
+
+    public Pointer LoadProcess(String processName){
+        zezeniaPID = getProcessId(processName);
+
+       // zezeniaProcessHandle = openProcess(PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, zezeniaPID);
+
+        zezeniaProcessHandle = Kernel32.INSTANCE.OpenProcess(PROCESS_ALL_ACCESS, false, zezeniaPID);
+
+        return zezeniaProcessHandle;
+    }
+
+    public static Pointer openProcess(int permissions, int pid) {
+        Pointer process = kernel32.OpenProcess(permissions, true, pid);
+        return process;
+    }
+
+
+
     public void getFirstProcesses(String processName) {
         Psapi.INSTANCE.EnumProcesses(processList, 1024, dummyList);
         int pid;
@@ -50,12 +81,20 @@ public class JNACore {
                 if (ph != null) {
                     byte[] filename = new byte[512];
                     Psapi.INSTANCE.GetModuleBaseNameW(ph, new Pointer(0), filename, 512);
-                    String test = new String(filename);
-                    if (test.contains(processName)) {
-                        zezeniaPID = pid;
-                        zezeniaProcessHandle = ph;
-                        return;
+                    String test = new String(filename, StandardCharsets.ISO_8859_1);
+
+                      if (test.equals(processName)){
+                          zezeniaPID = pid;
+//                        zezeniaProcessHandle = ph;
+//                        return;
                     }
+
+
+//                    if (test.contains(processName)) {
+//                        zezeniaPID = pid;
+//                        zezeniaProcessHandle = ph;
+//                        return;
+//                    }
                     Kernel32.INSTANCE.CloseHandle(ph);
                 }
             }
@@ -108,7 +147,7 @@ public class JNACore {
 
         int size = 4;
         Memory pTemp = new Memory(size);
-        
+
 
         address = address + offsets[0];
         int i = 1;
@@ -129,21 +168,61 @@ public class JNACore {
         return pointerAddress;
     }
 
-    /*
-     Returns the base address of the modules of the given process.
-     I'm just using it for debugging.
-     */
+    public  long findDynAddress2( int[] offsets, long baseAddress)
+    {
+
+        long pointer = baseAddress;
+
+        int size = 4;
+        Memory pTemp = new Memory(size);
+        long pointerAddress = 0;
+
+        kernel32.ReadProcessMemory(zezeniaProcessHandle, baseAddress, pTemp, size, null);
+
+        long firstPointer = pTemp.getInt(0);
+
+        String _hexFirstValue = Long.toHexString(firstPointer);
+
+
+        for(int i = 0; i < offsets.length; i++)
+        {
+            if(i == 0)
+            {
+                kernel32.ReadProcessMemory(zezeniaProcessHandle, pointer, pTemp, size, null);
+
+            }
+
+            pointerAddress = ((pTemp.getInt(0)+offsets[i]));
+
+            String _hexTemp = Long.toHexString(pointerAddress);
+
+
+            if(i != offsets.length-1)
+                kernel32.ReadProcessMemory(zezeniaProcessHandle, pointerAddress, pTemp, size, null);
+
+
+        }
+
+        return pointerAddress;
+    }
+
     public int getBaseAddress() {
         try {
-            Pointer hProcess = zezeniaProcessHandle;
+            Pointer hProcess = zezeniaProcessHandle;  // LoadProcess("Grim Dawn");
 
             List<Module> hModules = PsapiTools.getInstance().EnumProcessModules(hProcess);
 
             for (   Module m : hModules) {
 
-                System.out.println((m.getFileName() + ": entry point at - 0x" + Long.toHexString(Pointer.nativeValue(m.getEntryPoint()))));
-                System.out.println("Base of dll : " + m.getLpBaseOfDll());
-                System.out.println(Integer.valueOf("" + Pointer.nativeValue(m.getLpBaseOfDll())));
+                if (m.getBaseName().equals("grim dawn.exe")) {
+
+                    System.out.println((m.getBaseName() + ": entry point at - 0x" + Long.toHexString(Pointer.nativeValue(m.getEntryPoint()))));
+                    System.out.println("Base of dll : " + m.getLpBaseOfDll());
+                    System.out.println(Integer.valueOf("" + Pointer.nativeValue(m.getLpBaseOfDll())));
+
+//                  return Long.valueOf("" + Pointer.nativeValue(m.getLpBaseOfDll()));
+                    return Integer.valueOf("" +    Pointer.nativeValue(m.getEntryPoint()));
+                }
 
             }
         } catch (Exception e) {

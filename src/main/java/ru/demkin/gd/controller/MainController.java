@@ -1,5 +1,6 @@
 package ru.demkin.gd.controller;
 
+import com.sun.jna.Memory;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -19,7 +20,7 @@ import java.util.ResourceBundle;
 public class MainController implements Initializable {
 
     final static long baseAddress = 0x002291E0;
-    final static long[] offsets = new long[]{0x68, 0x34C, 0xA74};
+    final static int[] offsets = new int[]{0x68, 0x34C, 0xA74};
 
 
     private static JNACore jnaCore;
@@ -49,16 +50,25 @@ public class MainController implements Initializable {
 
     public void initialize(URL location, ResourceBundle resources) {
 
+        jnaCore = JNACore.getInstance();
+        jnaCore.LoadProcess("Grim Dawn");
+
+        int _baseAddress = jnaCore.getBaseAddress();
+
+        long currentLong = jnaCore.findDynAddress2(offsets, baseAddress + _baseAddress);
+
+        Memory scoreMem = jnaCore.readMemory(jnaCore.zezeniaProcessHandle, currentLong, 4);
+
+        int scoreValue = scoreMem.getInt(0);
+
+        myField.setText(String.valueOf(scoreValue));
+
+
         myButton.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {
                 byte [] value = MemoryUtils.intToBytes(Integer.parseInt(myField.getText()));
                 reverse(value);
 
-                jnaCore = JNACore.getInstance();
-                jnaCore.getFirstProcesses("Grim Dawn.exe");
-
-
-              //  MemoryUtils.ChangeValue("Grim Dawn", baseAddress, offsets,value );
             }
         });
     }

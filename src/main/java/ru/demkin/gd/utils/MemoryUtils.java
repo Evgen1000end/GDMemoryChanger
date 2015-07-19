@@ -73,18 +73,7 @@ public  class MemoryUtils  {
         Memory pTemp = new Memory(size);
         long pointerAddress = 0;
 
-
-      //  long pointer2 = process.getLong(0); //Long.toHexString(pointer);
-
-       // pointer += pointer2;
-
-
-        //22
-
-       // long pointer2 = process.getNativeLong(0);
-
         kernel32.ReadProcessMemory(process, 0x229AA4, pTemp, size, null);
-
 
         long firstPointer = pTemp.getInt(0);
 

@@ -24,7 +24,11 @@ public class Module {
     }
 
     public String getFileName(){
-        return psapi.GetModuleFileNameExA(hProcess,hModule);
+        return psapi.GetModuleFileNameExA(hProcess, hModule);
+    }
+
+    public String getBaseName() {
+        return psapi.GetModuleBaseNameA(hProcess, hModule);
     }
 
 

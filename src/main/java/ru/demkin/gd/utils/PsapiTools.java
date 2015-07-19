@@ -2,6 +2,8 @@ package ru.demkin.gd.utils;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.WinDef;
+import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.ptr.IntByReference;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +30,7 @@ public class PsapiTools {
 
         Pointer[] lphModule = new Pointer[256];
         IntByReference lpcbNeededs = new IntByReference();
-        boolean success = Psapi.INSTANCE.EnumProcessModules(hProcess, lphModule, lphModule.length, lpcbNeededs);
+        boolean success = Psapi.INSTANCE.EnumProcessModulesEx(hProcess, lphModule, lphModule.length, lpcbNeededs, 0x01);
         if (!success) {
             int err = Native.getLastError();
             throw new Exception("EnumProcessModules failed. Error: " + err);
@@ -61,5 +63,12 @@ public class PsapiTools {
             throw new Exception("GetModuleInformation failed. Error: " + err);
         }
         return lpmodinfo;
+    }
+
+
+    public String GetModuleBaseNameA(Pointer hProcess, Pointer hModule){
+        byte[] lpImageFileName= new byte[256];
+        Psapi.INSTANCE.GetModuleBaseNameA(hProcess, hModule, lpImageFileName, 256);
+        return Native.toString(lpImageFileName);
     }
 }
