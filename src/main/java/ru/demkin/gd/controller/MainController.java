@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import ru.demkin.gd.utils.JNACore;
 import ru.demkin.gd.utils.MemoryUtils;
 
 import java.net.URL;
@@ -20,6 +21,8 @@ public class MainController implements Initializable {
     final static long baseAddress = 0x002291E0;
     final static long[] offsets = new long[]{0x68, 0x34C, 0xA74};
 
+
+    private static JNACore jnaCore;
 
     @FXML
     private Button myButton;
@@ -50,7 +53,12 @@ public class MainController implements Initializable {
             public void handle(ActionEvent event) {
                 byte [] value = MemoryUtils.intToBytes(Integer.parseInt(myField.getText()));
                 reverse(value);
-                MemoryUtils.ChangeValue("Grim Dawn", baseAddress, offsets,value );
+
+                jnaCore = JNACore.getInstance();
+                jnaCore.getFirstProcesses("Grim Dawn.exe");
+
+
+              //  MemoryUtils.ChangeValue("Grim Dawn", baseAddress, offsets,value );
             }
         });
     }

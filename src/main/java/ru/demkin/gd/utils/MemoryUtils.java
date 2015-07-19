@@ -7,6 +7,7 @@ import com.sun.jna.ptr.IntByReference;
 
 import java.nio.ByteBuffer;
 
+
 /**
  * Created by evgen1000end on 17.07.2015.
  */
@@ -14,6 +15,7 @@ public  class MemoryUtils  {
 
     static Kernel32 kernel32 = (Kernel32) Native.loadLibrary("kernel32", Kernel32.class);
     static User32 user32 = (User32) Native.loadLibrary("user32", User32.class);
+    static Psapi psapi = (Psapi) Native.loadLibrary("Psapi", Psapi.class);
 
     public static int PROCESS_VM_READ= 0x0010;
     public static int PROCESS_VM_WRITE = 0x0020;
@@ -60,6 +62,8 @@ public  class MemoryUtils  {
 
 
 
+
+
     public static long findDynAddress(Pointer process, long[] offsets, long baseAddress)
     {
 
@@ -70,16 +74,19 @@ public  class MemoryUtils  {
         long pointerAddress = 0;
 
 
-        String _hexBase = Long.toHexString(pointer);
+      //  long pointer2 = process.getLong(0); //Long.toHexString(pointer);
 
-        Memory temp2 = readMemory(process, pointer,4);
-
-        kernel32.ReadProcessMemory(process, pointer, pTemp, size, null);
+       // pointer += pointer2;
 
 
-        long firstPointer = temp2.getInt(0);
+        //22
+
+       // long pointer2 = process.getNativeLong(0);
+
+        kernel32.ReadProcessMemory(process, 0x229AA4, pTemp, size, null);
 
 
+        long firstPointer = pTemp.getInt(0);
 
         String _hexFirstValue = Long.toHexString(firstPointer);
 
@@ -105,6 +112,8 @@ public  class MemoryUtils  {
 
         return pointerAddress;
     }
+
+
 
     public static Memory readMemory(Pointer process, long address, int bytesToRead) {
         IntByReference read = new IntByReference(0);
@@ -132,6 +141,8 @@ public  class MemoryUtils  {
         int pid = getProcessId(processName);
 
         Pointer process = openProcess(PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, pid);
+
+       // String test = process.toString();
 
         long dynAddress = findDynAddress(process, offsets, baseAddress);
 

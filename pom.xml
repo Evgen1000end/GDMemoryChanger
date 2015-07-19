@@ -27,8 +27,13 @@
             <version>4.1.0</version>
         </dependency>
 
-    </dependencies>
+        <dependency>
+            <groupId>dsExplorer</groupId>
+            <artifactId>dsExplorer</artifactId>
+            <version>0.6</version>
+        </dependency>
 
+    </dependencies>
 
     <build>
         <plugins>
@@ -53,5 +58,4 @@
 
         </plugins>
     </build>
-
 </project>

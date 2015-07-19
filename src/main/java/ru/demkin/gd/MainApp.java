@@ -26,38 +26,38 @@ public class MainApp extends Application {
         Parent root = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
         stage.setTitle("Grim Dawn Trainer");
 
-        Label nameLbl = new Label("Enter your name:");
-        TextField nameFld = new TextField();
+//        Label nameLbl = new Label("Enter your name:");
+//        TextField nameFld = new TextField();
+//
+//        Label msg = new Label();
+//        msg.setStyle("-fx-text-fill: blue;");
+//
+//        Button sayHelloBtn = new Button("Say Hello");
+//        Button exitBtn = new Button("Exit");
+//
+//        // Add the event handler for the Say Hello button
+//        sayHelloBtn.setOnAction(e -> {
+//            String name = nameFld.getText();
+//            if (name.trim().length() > 0) {
+//                msg.setText("Hello " + name);
+//            } else {
+//                msg.setText("Hello there");
+//            }
+//        });
+//
+//
+//        exitBtn.setOnAction(e -> Platform.exit());
+//
+//        VBox box = new VBox();
+//
+//        box.setSpacing(5);
+//
+//        box.getChildren().addAll(nameLbl, nameFld, msg, sayHelloBtn, exitBtn);
+//
+//        Scene scene = new Scene(box, 400, 150);
+//        stage.setScene(scene);
 
-        Label msg = new Label();
-        msg.setStyle("-fx-text-fill: blue;");
-
-        Button sayHelloBtn = new Button("Say Hello");
-        Button exitBtn = new Button("Exit");
-
-        // Add the event handler for the Say Hello button
-        sayHelloBtn.setOnAction(e -> {
-            String name = nameFld.getText();
-            if (name.trim().length() > 0) {
-                msg.setText("Hello " + name);
-            } else {
-                msg.setText("Hello there");
-            }
-        });
-
-
-        exitBtn.setOnAction(e -> Platform.exit());
-
-        VBox box = new VBox();
-
-        box.setSpacing(5);
-
-        box.getChildren().addAll(nameLbl, nameFld, msg, sayHelloBtn, exitBtn);
-
-        Scene scene = new Scene(box, 400, 150);
-        stage.setScene(scene);
-
-        //stage.setScene(new Scene(root));
+        stage.setScene(new Scene(root));
 
         stage.show();
     }
