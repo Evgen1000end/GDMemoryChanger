@@ -12,9 +12,12 @@ public class AddressService {
 
 
     private long skillDynamicAddress;
-    final long skillBaseAddress = 0x002291E0;
-    final int[] skillsOffsets = new int[]{0x68, 0x34C, 0xA74};
+    private final long skillBaseAddress = 0x002291E0;
+    private final int[] skillsOffsets = new int[]{0x68, 0x34C, 0xA74};
 
+    private long attributeDynamicAddress;
+    private final long attributeBaseAddress = 0x002291E0;
+    private final int[] attributeOffsets = new int[]{0x68, 0x34C, 0xA70};
 
     private static JNACore jnaCore;
 
@@ -42,6 +45,7 @@ public class AddressService {
         currentProcessAddress = jnaCore.getBaseAddress();
 
         skillDynamicAddress = jnaCore.findDynAddress2(skillsOffsets, currentProcessAddress + skillBaseAddress);
+        attributeDynamicAddress =  jnaCore.findDynAddress2(attributeOffsets, currentProcessAddress+attributeBaseAddress);
     }
 
     public int getSkill(){
@@ -53,5 +57,16 @@ public class AddressService {
         reverse(value);
         jnaCore.writeMemory(jnaCore.process,skillDynamicAddress, value );
     }
+
+    public int getAttribute(){
+        Memory scoreMem = jnaCore.readMemory(jnaCore.process, attributeDynamicAddress, 4);
+        return scoreMem.getInt(0);
+    }
+
+    public void setAttribute(byte[] value){
+        reverse(value);
+        jnaCore.writeMemory(jnaCore.process,attributeDynamicAddress, value );
+    }
+
 
 }
