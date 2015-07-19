@@ -22,7 +22,6 @@ public class MainController implements Initializable {
 
     AddressService addressService = new AddressService();
 
-
     @FXML
     private Button myButton;
 
@@ -33,16 +32,9 @@ public class MainController implements Initializable {
     private TextField attrField;
 
 
-
     public void initialize(URL location, ResourceBundle resources) {
 
         myField.setText(String.valueOf(addressService.getSkill()));
-
-        myButton.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent event) {
-                addressService.setSkill(MemoryUtils.intToBytes(Integer.parseInt(myField.getText())));
-
-            }
-        });
+        myButton.setOnAction(event ->addressService.setSkill(MemoryUtils.intToBytes(Integer.parseInt(myField.getText()))));
     }
 }
