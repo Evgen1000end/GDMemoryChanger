@@ -6,7 +6,10 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="287.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.demkin.gd.controller.MainController">
    <children>
-      <Button fx:id="myButton" layoutX="266.0" layoutY="188.0" mnemonicParsing="false" text="Button" />
-      <TextField fx:id="myField" layoutX="226.0" layoutY="229.0" />
+      <Button fx:id="myButton" layoutX="459.0" layoutY="242.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="127.0" text="Submit" />
+      <TextField fx:id="myField" layoutX="105.0" layoutY="20.0" />
+      <Label layoutX="14.0" layoutY="24.0" prefHeight="17.0" prefWidth="73.0" text="Skill Points" />
+      <Label layoutX="14.0" layoutY="55.0" text="Attribute Points" />
+      <TextField fx:id="attrField" layoutX="105.0" layoutY="51.0" />
    </children>
 </AnchorPane>

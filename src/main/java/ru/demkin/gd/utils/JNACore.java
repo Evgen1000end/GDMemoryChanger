@@ -22,20 +22,12 @@ public class JNACore {
     public final int PROCESS_VM_OPERATION = 0x0008;
     public final int PROCESS_ALL_ACCESS = 0x001F0FFF;
 
-    /*
-     Zezenia client objects
-     */
-    public int zezeniaPID;
-    public Pointer zezeniaProcessHandle;
+    public int Pid;
+    public Pointer process;
     private int[] processList = new int[512];
     private int[] dummyList = new int[512];
-   // private Memory pTemp = new Memory(8);
-   // private Memory toWrite = new Memory(1);
     private IntByReference bytesReturned = new IntByReference();
 
-    /*
-     JNACore Constructor
-     */
     private JNACore() {
     }
 
@@ -54,13 +46,13 @@ public class JNACore {
     }
 
     public Pointer LoadProcess(String processName){
-        zezeniaPID = getProcessId(processName);
+        Pid = getProcessId(processName);
 
-       // zezeniaProcessHandle = openProcess(PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, zezeniaPID);
+       // process = openProcess(PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, Pid);
 
-        zezeniaProcessHandle = Kernel32.INSTANCE.OpenProcess(PROCESS_ALL_ACCESS, false, zezeniaPID);
+        process = Kernel32.INSTANCE.OpenProcess(PROCESS_ALL_ACCESS, false, Pid);
 
-        return zezeniaProcessHandle;
+        return process;
     }
 
     public static Pointer openProcess(int permissions, int pid) {
@@ -84,15 +76,15 @@ public class JNACore {
                     String test = new String(filename, StandardCharsets.ISO_8859_1);
 
                       if (test.equals(processName)){
-                          zezeniaPID = pid;
-//                        zezeniaProcessHandle = ph;
+                          Pid = pid;
+//                        process = ph;
 //                        return;
                     }
 
 
 //                    if (test.contains(processName)) {
-//                        zezeniaPID = pid;
-//                        zezeniaProcessHandle = ph;
+//                        Pid = pid;
+//                        process = ph;
 //                        return;
 //                    }
                     Kernel32.INSTANCE.CloseHandle(ph);
@@ -153,11 +145,11 @@ public class JNACore {
         int i = 1;
         while (i < offsets.length) {
             if (i == 1) {
-                boolean ReadProcessMemory = Kernel32.INSTANCE.ReadProcessMemory(zezeniaProcessHandle, address, pTemp, 4, bytesReturned);
+                boolean ReadProcessMemory = Kernel32.INSTANCE.ReadProcessMemory(process, address, pTemp, 4, bytesReturned);
             }
             pointerAddress = ((pTemp.getInt(0) + offsets[i]));
             if (i != offsets.length - 1) {
-                boolean ReadProcessMemory = Kernel32.INSTANCE.ReadProcessMemory(zezeniaProcessHandle, pointerAddress, pTemp, 4, bytesReturned);
+                boolean ReadProcessMemory = Kernel32.INSTANCE.ReadProcessMemory(process, pointerAddress, pTemp, 4, bytesReturned);
             }
             i++;
             //if pTempt returns 0, that means the value in memory isnt occupied yet
@@ -177,7 +169,7 @@ public class JNACore {
         Memory pTemp = new Memory(size);
         long pointerAddress = 0;
 
-        kernel32.ReadProcessMemory(zezeniaProcessHandle, baseAddress, pTemp, size, null);
+        kernel32.ReadProcessMemory(process, baseAddress, pTemp, size, null);
 
         long firstPointer = pTemp.getInt(0);
 
@@ -188,7 +180,7 @@ public class JNACore {
         {
             if(i == 0)
             {
-                kernel32.ReadProcessMemory(zezeniaProcessHandle, pointer, pTemp, size, null);
+                kernel32.ReadProcessMemory(process, pointer, pTemp, size, null);
 
             }
 
@@ -198,7 +190,7 @@ public class JNACore {
 
 
             if(i != offsets.length-1)
-                kernel32.ReadProcessMemory(zezeniaProcessHandle, pointerAddress, pTemp, size, null);
+                kernel32.ReadProcessMemory(process, pointerAddress, pTemp, size, null);
 
 
         }
@@ -208,7 +200,7 @@ public class JNACore {
 
     public int getBaseAddress() {
         try {
-            Pointer hProcess = zezeniaProcessHandle;  // LoadProcess("Grim Dawn");
+            Pointer hProcess = process;  // LoadProcess("Grim Dawn");
 
             List<Module> hModules = PsapiTools.getInstance().EnumProcessModules(hProcess);
 
